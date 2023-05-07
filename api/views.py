@@ -1,15 +1,19 @@
-from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-import numpy as np
-import pickle
+from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import json
+import numpy as np
+import pickle
 
 import tensorflow
 # Create your views here.
 @api_view(['POST'])
 def apiOverview(request):
-    # print("Hello")
+    data_from_post = json.load(request)['issue']
+
+    print(data_from_post)
+    
     loaded_model = tensorflow.keras.models.load_model("model_15k")
     
     with open('filename.pkl', 'rb') as handle:
@@ -17,7 +21,7 @@ def apiOverview(request):
 
     temp = []
     for word in most_common: # iterating each most common word for each issue
-        if word[0] not in request.data['issue']:
+        if word[0] not in data_from_post:
             temp.append(0)
         else:
             temp.append(1)
